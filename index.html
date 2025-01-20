@@ -7,8 +7,8 @@
   </head>
 
   <body>
-    <div class="container">
-      <ul class="comments">
+    <div id="content" class="container">
+      <ul id="commentList" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -59,7 +59,9 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button" id="addButton">Написать</button>
+          <button disabled class="add-form-button" id="addButton">
+            Написать
+          </button>
         </div>
       </div>
     </div>
@@ -68,12 +70,93 @@
   <script>
     "use strict";
     console.log("It works!");
+    const contentEl = document.getElementById("content");
     const addButtonEl = document.getElementById("addButton");
     const nameInputEl = document.getElementById("nameInput");
     const commentInputEl = document.getElementById("commentInput");
+    const commentListEl = document.getElementById("commentList");
 
-    addButtonEl.addEventListener("click", () => {
-        console.log(nameInputEl.value);
+    const funcDate = () => {
+      const currentDate = new Date();
+      const options = {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      };
+      return currentDate.toLocaleDateString("ru-RU", options);
+    };
+
+    nameInputEl.addEventListener("input", () => {
+      addButtonEl.disabled = false;
     });
+    commentInputEl.addEventListener("input", () => {
+      addButtonEl.disabled = false;
+    });
+
+    contentEl.addEventListener("keyup", (e) => {
+      e.preventDefault();
+      if (e.keyCode === 13) {
+        if (nameInputEl.value === "") {
+          alert("Введите имя");
+        } else {
+          if (commentInputEl.value === "") {
+            alert("Введите комментарий");
+          } else {
+            commentListEl.innerHTML =
+              commentListEl.innerHTML +
+              `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputEl.value}</div>
+            <div>${funcDate()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInputEl.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+          }
+        }
+      }
+    });
+
+    addButtonEl.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (nameInputEl.value === "") {
+        alert("Введите имя");
+      } else {
+        if (commentInputEl.value === "") {
+          alert("Введите комментарий");
+        } else {
+          commentListEl.innerHTML =
+            commentListEl.innerHTML +
+            `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputEl.value}</div>
+            <div>${funcDate()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInputEl.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+        }
+      }
+    });
+
+
   </script>
 </html>
