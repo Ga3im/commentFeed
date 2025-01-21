@@ -8,42 +8,7 @@
 
   <body>
     <div id="content" class="container">
-      <ul id="commentList" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
+      <ul id="commentList" class="comments"></ul>
       <div class="add-form">
         <input
           id="nameInput"
@@ -69,13 +34,31 @@
 
   <script>
     "use strict";
-    console.log("It works!");
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        comment: "Это будет первый комментарий на этой странице",
+        likes: 3,
+        isLike: false,
+      },
+      {
+        name: "Варвара",
+        date: "13.02.22 19:22",
+        comment: "Мне нравится как оформлена эта страница! ❤",
+        likes: 75,
+        isLike: true,
+      },
+    ];
+
     const contentEl = document.getElementById("content");
     const addButtonEl = document.getElementById("addButton");
     const nameInputEl = document.getElementById("nameInput");
     const commentInputEl = document.getElementById("commentInput");
     const commentListEl = document.getElementById("commentList");
-
+    const likeButtonsEl = document.querySelectorAll(".like-button");
+    const commentsEl = document.querySelectorAll(".comment");
+    // функция времени
     const funcDate = () => {
       const currentDate = new Date();
       const options = {
@@ -93,6 +76,49 @@
       addButtonEl.disabled = false;
     });
 
+    // Отрисовка комментариев через JS массив
+    const renderComments = () => {
+      const commentsHtml = comments
+        .map((comment, index) => {
+          return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button data-index="${index}" class="like-button ${
+            comment.isLike ? "-active-like" : ""
+          }"></button>
+            </div>
+          </div>
+        </li>`;
+        })
+        .join("");
+      commentListEl.innerHTML = commentsHtml;
+    };
+    renderComments();
+
+    // Событие при нажатии на лайк
+    for (const likeButtonEl of likeButtonsEl) {
+      likeButtonEl.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (isLike) {
+          --commentEl.likes;
+        } else {
+          ++commentEl.likes;
+        }
+        console.log(commentEl.likes);
+      });
+    }
+
+    // Событие при нажатии на Enter
     contentEl.addEventListener("keyup", (e) => {
       e.preventDefault();
       if (e.keyCode === 13) {
@@ -102,30 +128,21 @@
           if (commentInputEl.value === "") {
             alert("Введите комментарий");
           } else {
-            commentListEl.innerHTML =
-              commentListEl.innerHTML +
-              `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputEl.value}</div>
-            <div>${funcDate()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentInputEl.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+            comments.push({
+              name: nameInputEl.value,
+              comment: commentInputEl.value,
+              isLike: false,
+              date: funcDate(),
+              likes: 0,
+            });
+            nameInputEl.value = "";
+            commentInputEl.value = "";
           }
         }
       }
+      renderComments();
     });
-
+    // Событие клика на кнопку "Написать"
     addButtonEl.addEventListener("click", (e) => {
       e.preventDefault();
       if (nameInputEl.value === "") {
@@ -134,29 +151,18 @@
         if (commentInputEl.value === "") {
           alert("Введите комментарий");
         } else {
-          commentListEl.innerHTML =
-            commentListEl.innerHTML +
-            `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputEl.value}</div>
-            <div>${funcDate()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentInputEl.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+          comments.push({
+            name: nameInputEl.value,
+            comment: commentInputEl.value,
+            isLike: false,
+            date: funcDate(),
+            likes: 0,
+          });
+          nameInputEl.value = "";
+          commentInputEl.value = "";
         }
       }
+      renderComments();
     });
-
-
   </script>
 </html>
