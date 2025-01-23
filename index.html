@@ -60,6 +60,7 @@
     const nameInputEl = document.getElementById("nameInput");
     const commentInputEl = document.getElementById("commentInput");
     const commentListEl = document.getElementById("commentList");
+    let canEdit = true;
     let editComment = "";
 
     // функция времени
@@ -81,20 +82,23 @@
     });
     // редактирование комментария при двойном клике
     const initEditListener = () => {
-      const commentsEl = document.querySelectorAll(".comment-body");
-      const likeButtonsEl = document.querySelectorAll(".like-button");
-      for (const commentEl of commentsEl) {
-        let id = Number(commentEl.dataset.id);
-        commentEl.addEventListener("dblclick", (e) => {
-          e.preventDefault();
-          comments.map((comment) => {
-            if (comment.id === id) {
-              editComment = comment.comment;
-              comment.isEdit = true;
-            }
+      if (canEdit) {
+        const commentsEl = document.querySelectorAll(".comment-body");
+        const likeButtonsEl = document.querySelectorAll(".like-button");
+        for (const commentEl of commentsEl) {
+          let id = Number(commentEl.dataset.id);
+          commentEl.addEventListener("dblclick", (e) => {
+            e.preventDefault();
+            comments.map((comment) => {
+              if (comment.id === id) {
+                canEdit = false
+                editComment = comment.comment;
+                comment.isEdit = true;
+              }
+            });
+            renderComments();
           });
-          renderComments();
-        });
+        }
       }
     };
 
@@ -109,6 +113,7 @@
             if (comment.id === id) {
               comment.comment = editComment;
               comment.isEdit = false;
+              canEdit = true
             }
           });
           renderComments();
