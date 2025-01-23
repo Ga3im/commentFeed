@@ -36,6 +36,7 @@
     "use strict";
     const comments = [
       {
+        id: 1,
         name: "Глеб Фокин",
         date: "12.02.22 12:18",
         comment: "Это будет первый комментарий на этой странице",
@@ -43,6 +44,7 @@
         isLike: false,
       },
       {
+        id: 2,
         name: "Варвара",
         date: "13.02.22 19:22",
         comment: "Мне нравится как оформлена эта страница! ❤",
@@ -56,8 +58,7 @@
     const nameInputEl = document.getElementById("nameInput");
     const commentInputEl = document.getElementById("commentInput");
     const commentListEl = document.getElementById("commentList");
-    const likeButtonsEl = document.querySelectorAll(".like-button");
-    const commentsEl = document.querySelectorAll(".comment");
+
     // функция времени
     const funcDate = () => {
       const currentDate = new Date();
@@ -76,11 +77,34 @@
       addButtonEl.disabled = false;
     });
 
+    const initLikeBtnListener = () => {
+      const likeButtonsEl = document.querySelectorAll(".like-button");
+      // Событие при нажатии на лайк
+      for (const likeButtonEl of likeButtonsEl) {
+        let id = Number(likeButtonEl.dataset.id);
+        likeButtonEl.addEventListener("click", (e) => {
+          e.preventDefault();
+          comments.map((comment) => {
+            if (comment.id === id) {
+              if (comment.isLike) {
+                --comment.likes;
+                comment.isLike = false;
+              } else {
+                ++comment.likes;
+                comment.isLike = true;
+              }
+              console.log(comment.likes);
+            }
+          });
+          renderComments();
+        });
+      }
+    };
     // Отрисовка комментариев через JS массив
     const renderComments = () => {
       const commentsHtml = comments
-        .map((comment, index) => {
-          return `<li class="comment">
+        .map((comment) => {
+          return `<li class="comment" >
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -93,30 +117,20 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button data-index="${index}" class="like-button ${
-            comment.isLike ? "-active-like" : ""
-          }"></button>
+              <button class="like-button ${
+                comment.isLike ? "-active-like" : ""
+              }" data-id="${comment.id}" ></button>
             </div>
           </div>
         </li>`;
         })
         .join("");
-      commentListEl.innerHTML = commentsHtml;
-    };
-    renderComments();
 
-    // Событие при нажатии на лайк
-    for (const likeButtonEl of likeButtonsEl) {
-      likeButtonEl.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (isLike) {
-          --commentEl.likes;
-        } else {
-          ++commentEl.likes;
-        }
-        console.log(commentEl.likes);
-      });
-    }
+      commentListEl.innerHTML = commentsHtml;
+      initLikeBtnListener();
+    };
+
+    renderComments();
 
     // Событие при нажатии на Enter
     contentEl.addEventListener("keyup", (e) => {
@@ -152,6 +166,7 @@
           alert("Введите комментарий");
         } else {
           comments.push({
+            id: comments.length + 1,
             name: nameInputEl.value,
             comment: commentInputEl.value,
             isLike: false,
