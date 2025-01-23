@@ -53,6 +53,15 @@ body {
 .comment-footer {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+}
+
+.comment-edit {
+  background: none;
+  /* border: none; */
+  width: -webkit-fill-available;
+  height: 80px;
+  resize: none;
 }
 
 .comment-body {
@@ -62,6 +71,26 @@ body {
 
 .comment-text {
   font-size: 32px;
+}
+
+.button-save {
+  margin-right: 15px;
+  font-size: 12px;
+  padding: 6px 12px;
+  background-color: #bcec30;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+}
+
+.button-cancel {
+  margin-right: 270px;
+  font-size: 12px;
+  padding: 6px 12px;
+  background-color: #bcec30;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
 }
 
 .likes {

@@ -42,6 +42,7 @@
         comment: "Это будет первый комментарий на этой странице",
         likes: 3,
         isLike: false,
+        idEdit: false,
       },
       {
         id: 2,
@@ -50,6 +51,7 @@
         comment: "Мне нравится как оформлена эта страница! ❤",
         likes: 75,
         isLike: true,
+        idEdit: false,
       },
     ];
 
@@ -58,6 +60,7 @@
     const nameInputEl = document.getElementById("nameInput");
     const commentInputEl = document.getElementById("commentInput");
     const commentListEl = document.getElementById("commentList");
+    let editComment = "";
 
     // функция времени
     const funcDate = () => {
@@ -76,10 +79,46 @@
     commentInputEl.addEventListener("input", () => {
       addButtonEl.disabled = false;
     });
+    // редактирование комментария при двойном клике
+    const initEditListener = () => {
+      const commentsEl = document.querySelectorAll(".comment-body");
+      const likeButtonsEl = document.querySelectorAll(".like-button");
+      for (const commentEl of commentsEl) {
+        let id = Number(commentEl.dataset.id);
+        commentEl.addEventListener("dblclick", (e) => {
+          e.preventDefault();
+          comments.map((comment) => {
+            if (comment.id === id) {
+              editComment = comment.comment;
+              comment.isEdit = true;
+            }
+          });
+          renderComments();
+        });
+      }
+    };
 
+    // отмена редактирования
+    const initCancelEditListener = () => {
+      const cancelBtnsEls = document.querySelectorAll(".button-cancel");
+      for (const cancelBtnEl of cancelBtnsEls) {
+        let id = Number(cancelBtnEl.dataset.id);
+        cancelBtnEl.addEventListener("click", (e) => {
+          e.preventDefault();
+          comments.map((comment) => {
+            if (comment.id === id) {
+              comment.comment = editComment;
+              comment.isEdit = false;
+            }
+          });
+          renderComments();
+        });
+      }
+    };
+
+    // Событие при нажатии на лайк
     const initLikeBtnListener = () => {
       const likeButtonsEl = document.querySelectorAll(".like-button");
-      // Событие при нажатии на лайк
       for (const likeButtonEl of likeButtonsEl) {
         let id = Number(likeButtonEl.dataset.id);
         likeButtonEl.addEventListener("click", (e) => {
@@ -93,7 +132,6 @@
                 ++comment.likes;
                 comment.isLike = true;
               }
-              console.log(comment.likes);
             }
           });
           renderComments();
@@ -109,12 +147,20 @@
             <div>${comment.name}</div>
             <div>${comment.date}</div>
           </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comment.comment}
-            </div>
+          <div class="comment-body" data-id="${comment.id}">
+            ${
+              comment.isEdit
+                ? `<textarea value="${editComment}" class="comment-edit"></textarea>`
+                : `<div class="comment-text">${comment.comment}</div>`
+            }
+
           </div>
           <div class="comment-footer">
+          ${
+            comment.isEdit
+              ? `<button class='button-save'>Сохранить</button> <button class='button-cancel' data-id="${comment.id}">Отмена</button>`
+              : ""
+          }
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
               <button class="like-button ${
@@ -128,6 +174,8 @@
 
       commentListEl.innerHTML = commentsHtml;
       initLikeBtnListener();
+      initEditListener();
+      initCancelEditListener();
     };
 
     renderComments();
@@ -148,6 +196,7 @@
               isLike: false,
               date: funcDate(),
               likes: 0,
+              idEdit: false,
             });
             nameInputEl.value = "";
             commentInputEl.value = "";
@@ -156,6 +205,7 @@
       }
       renderComments();
     });
+
     // Событие клика на кнопку "Написать"
     addButtonEl.addEventListener("click", (e) => {
       e.preventDefault();
