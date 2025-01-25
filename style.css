@@ -57,11 +57,15 @@ body {
 }
 
 .comment-edit {
+  font-family: Helvetica;
   background: none;
   /* border: none; */
   width: -webkit-fill-available;
   height: 80px;
   resize: none;
+  color: #fff;
+  font-size: 32px;
+
 }
 
 .comment-body {

@@ -91,7 +91,7 @@
             e.preventDefault();
             comments.map((comment) => {
               if (comment.id === id) {
-                canEdit = false
+                canEdit = false;
                 editComment = comment.comment;
                 comment.isEdit = true;
               }
@@ -99,6 +99,25 @@
             renderComments();
           });
         }
+      }
+    };
+
+    //сохранить редактирование
+    const initSaveEditListener = () => {
+      const saveButtonsEls = document.querySelectorAll(".button-save");
+      const commentEdit = document.querySelectorAll(".comment-edit");
+      for (const saveButtonEl of saveButtonsEls) {
+        let id = Number(saveButtonEl.dataset.id);
+        saveButtonEl.addEventListener("click", (e) => {
+          e.preventDefault();
+          comments.map((comment) => {
+            if (comment.id === id) {
+              comment.comment = commentEdit.value;
+              console.log(commentEdit.value);
+            }
+          });
+          renderComments();
+        });
       }
     };
 
@@ -113,7 +132,7 @@
             if (comment.id === id) {
               comment.comment = editComment;
               comment.isEdit = false;
-              canEdit = true
+              canEdit = true;
             }
           });
           renderComments();
@@ -147,7 +166,7 @@
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment) => {
-          return `<li class="comment" >
+          return `<li class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -155,7 +174,7 @@
           <div class="comment-body" data-id="${comment.id}">
             ${
               comment.isEdit
-                ? `<textarea value="${editComment}" class="comment-edit"></textarea>`
+                ? `<textarea class="comment-edit">${comment.comment}</textarea>`
                 : `<div class="comment-text">${comment.comment}</div>`
             }
 
@@ -163,7 +182,7 @@
           <div class="comment-footer">
           ${
             comment.isEdit
-              ? `<button class='button-save'>Сохранить</button> <button class='button-cancel' data-id="${comment.id}">Отмена</button>`
+              ? `<button class='button-save' data-id="${comment.id}">Сохранить</button> <button class='button-cancel' data-id="${comment.id}">Отмена</button>`
               : ""
           }
             <div class="likes">
@@ -180,7 +199,9 @@
       commentListEl.innerHTML = commentsHtml;
       initLikeBtnListener();
       initEditListener();
+      initSaveEditListener();
       initCancelEditListener();
+      console.log(('render'));
     };
 
     renderComments();
