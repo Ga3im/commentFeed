@@ -96,9 +96,9 @@
                 canEdit = false;
                 editComment = comment.comment;
                 comment.isEdit = true;
+                renderComments();
               }
             });
-            renderComments();
           });
         }
       }
@@ -107,7 +107,12 @@
     //сохранить редактирование
     const initSaveEditListener = () => {
       const saveButtonsEls = document.querySelectorAll(".button-save");
-      const commentEdit = document.getElementById("commentedit");
+      const editEl = document.querySelector(".comment-edit");
+      let newEditedComment = "";
+        editEl.addEventListener("input", (e) => {
+          e.preventDefault();
+          newEditedComment = editEl.value;
+        });    
       for (const saveButtonEl of saveButtonsEls) {
         let id = Number(saveButtonEl.dataset.id);
         saveButtonEl.addEventListener("click", (e) => {
@@ -115,12 +120,12 @@
           console.log("saved the edited comment");
           comments.map((comment) => {
             if (comment.id === id) {
-              comment.comment = commentEdit.value;
               comment.isEdit = false;
               canEdit = true;
+              comment.comment = newEditedComment;
             }
+            renderComments();
           });
-          renderComments();
         });
       }
     };
@@ -169,6 +174,7 @@
         });
       }
     };
+
     // Отрисовка комментариев через JS массив
     const renderComments = () => {
       const commentsHtml = comments
@@ -181,7 +187,7 @@
           <div class="comment-body" data-id="${comment.id}">
             ${
               comment.isEdit
-                ? `<textarea name="text" id="commentedit" class="comment-edit">${comment.comment}</textarea>`
+                ? `<textarea class="comment-edit">${comment.comment}</textarea>`
                 : `<div class="comment-text">${comment.comment}</div>`
             }
 
@@ -206,6 +212,7 @@
       commentListEl.innerHTML = commentsHtml;
       initLikeBtnListener();
       initEditListener();
+      
       initSaveEditListener();
       initCancelEditListener();
       console.log("render page");
