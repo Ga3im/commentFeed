@@ -80,7 +80,7 @@
     commentInputEl.addEventListener("input", () => {
       addButtonEl.disabled = false;
     });
-    
+
     // редактирование комментария при двойном клике
     const initEditListener = () => {
       if (canEdit) {
@@ -90,6 +90,7 @@
           let id = Number(commentEl.dataset.id);
           commentEl.addEventListener("dblclick", (e) => {
             e.preventDefault();
+            console.log("editing comment");
             comments.map((comment) => {
               if (comment.id === id) {
                 canEdit = false;
@@ -111,6 +112,7 @@
         let id = Number(saveButtonEl.dataset.id);
         saveButtonEl.addEventListener("click", (e) => {
           e.preventDefault();
+          console.log("saved the edited comment");
           comments.map((comment) => {
             if (comment.id === id) {
               comment.comment = commentEdit.value;
@@ -130,6 +132,7 @@
         let id = Number(cancelBtnEl.dataset.id);
         cancelBtnEl.addEventListener("click", (e) => {
           e.preventDefault();
+          console.log("canceled editing");
           comments.map((comment) => {
             if (comment.id === id) {
               comment.comment = editComment;
@@ -154,9 +157,11 @@
               if (comment.isLike) {
                 --comment.likes;
                 comment.isLike = false;
+                console.log(`disliked comment, id:${comment.id}`);
               } else {
                 ++comment.likes;
                 comment.isLike = true;
+                console.log(`liked comment, id:${comment.id}`);
               }
             }
           });
@@ -203,7 +208,7 @@
       initEditListener();
       initSaveEditListener();
       initCancelEditListener();
-      console.log(('render'));
+      console.log("render page");
     };
 
     renderComments();
@@ -228,6 +233,7 @@
             });
             nameInputEl.value = "";
             commentInputEl.value = "";
+            console.log("added new comment clicked enter");
           }
         }
       }
@@ -253,6 +259,7 @@
           });
           nameInputEl.value = "";
           commentInputEl.value = "";
+          console.log('added new comment clicked "Написать"');
         }
       }
       renderComments();
