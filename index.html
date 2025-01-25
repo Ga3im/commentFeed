@@ -80,6 +80,7 @@
     commentInputEl.addEventListener("input", () => {
       addButtonEl.disabled = false;
     });
+    
     // редактирование комментария при двойном клике
     const initEditListener = () => {
       if (canEdit) {
@@ -105,7 +106,7 @@
     //сохранить редактирование
     const initSaveEditListener = () => {
       const saveButtonsEls = document.querySelectorAll(".button-save");
-      const commentEdit = document.querySelectorAll(".comment-edit");
+      const commentEdit = document.getElementById("commentedit");
       for (const saveButtonEl of saveButtonsEls) {
         let id = Number(saveButtonEl.dataset.id);
         saveButtonEl.addEventListener("click", (e) => {
@@ -113,7 +114,8 @@
           comments.map((comment) => {
             if (comment.id === id) {
               comment.comment = commentEdit.value;
-              console.log(commentEdit.value);
+              comment.isEdit = false;
+              canEdit = true;
             }
           });
           renderComments();
@@ -174,7 +176,7 @@
           <div class="comment-body" data-id="${comment.id}">
             ${
               comment.isEdit
-                ? `<textarea class="comment-edit">${comment.comment}</textarea>`
+                ? `<textarea name="text" id="commentedit" class="comment-edit">${comment.comment}</textarea>`
                 : `<div class="comment-text">${comment.comment}</div>`
             }
 
