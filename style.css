@@ -74,8 +74,25 @@ body {
 }
 
 .quote{
+  resize: none;
+  border: none;
+  display: none;
+  background: none;
+}
+
+.defaultTextarea{
+  margin-top: 10px;
+  overflow: hidden;
+  resize: none;
+}
+
+.addquote{
+  padding:10 0 10 0 ;
+  margin-bottom: 10px;
+  color: #000;
   background: #fff;
 }
+
 .comment-text {
   font-size: 32px;
 }

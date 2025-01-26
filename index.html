@@ -16,6 +16,7 @@
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
+        <textarea readonly class="quote defaultTextarea" name="" id=""></textarea>
         <textarea
           id="commentInput"
           type="textarea"
@@ -40,6 +41,7 @@
         name: "Глеб Фокин",
         date: "12.02.22 12:18",
         comment: "Это будет первый комментарий на этой странице",
+        quote: "",
         likes: 3,
         isLike: false,
         idEdit: false,
@@ -49,6 +51,7 @@
         name: "Варвара",
         date: "13.02.22 19:22",
         comment: "Мне нравится как оформлена эта страница! ❤",
+        quote: "",
         likes: 75,
         isLike: true,
         idEdit: false,
@@ -60,9 +63,11 @@
     const nameInputEl = document.getElementById("nameInput");
     const commentInputEl = document.getElementById("commentInput");
     const commentListEl = document.getElementById("commentList");
+    const quoteEl = document.querySelector(".quote");
+    let userComment = "";
+    let name = "";
     let canEdit = true;
     let editComment = "";
-
     // функция времени
     const funcDate = () => {
       const currentDate = new Date();
@@ -121,8 +126,9 @@
             }
           });
           console.log("answer on comment");
+          quoteEl.value = userComment + "\n©" + name;
+          quoteEl.classList.remove("quote");
           commentInputEl.scrollIntoView({ behavior: "smooth" });
-          commentInputEl.value = userComment + `\n© ${name}`;
           renderComments();
         });
       }
@@ -209,6 +215,7 @@
             <div>${comment.date}</div>
           </div>
           <div class="comment-body" data-id="${comment.id}">
+            <div class='addquote'>${comment.quote}</div>
             ${
               comment.isEdit
                 ? `<textarea class="comment-edit">${comment.comment}</textarea>`
@@ -232,7 +239,6 @@
         </li>`;
         })
         .join("");
-
       commentListEl.innerHTML = commentsHtml;
       initLikeBtnListener();
       initEditListener();
@@ -287,9 +293,12 @@
             isLike: false,
             date: funcDate(),
             likes: 0,
+            quote: quoteEl.value,
           });
           nameInputEl.value = "";
           commentInputEl.value = "";
+          quoteEl.value = "";
+          quoteEl.classList.add("quote");
           console.log('added new comment clicked "Написать"');
         }
       }
