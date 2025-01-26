@@ -73,6 +73,9 @@ body {
   margin-bottom: 32px;
 }
 
+.quote{
+  background: #fff;
+}
 .comment-text {
   font-size: 32px;
 }

@@ -89,7 +89,7 @@
         for (const commentEl of commentsEl) {
           let id = Number(commentEl.dataset.id);
           commentEl.addEventListener("dblclick", (e) => {
-            e.preventDefault();
+            e.stopPropagation();
             console.log("editing comment");
             comments.map((comment) => {
               if (comment.id === id) {
@@ -104,15 +104,39 @@
       }
     };
 
+    // ответ на комментарий
+    const initAnswerComment = () => {
+      const commentsEl = document.querySelectorAll(".comment-body");
+      const headersEls = document.querySelectorAll(".comment-header");
+      let name;
+      let userComment;
+      for (const commentEl of commentsEl) {
+        commentEl.addEventListener("click", (e) => {
+          e.preventDefault();
+          let id = Number(commentEl.dataset.id);
+          comments.map((comment) => {
+            if (comment.id === id) {
+              name = comment.name;
+              userComment = comment.comment;
+            }
+          });
+          console.log("answer on comment");
+          commentInputEl.scrollIntoView({ behavior: "smooth" });
+          commentInputEl.value = userComment + `\n© ${name}`;
+          renderComments();
+        });
+      }
+    };
+
     //сохранить редактирование
     const initSaveEditListener = () => {
       const saveButtonsEls = document.querySelectorAll(".button-save");
       const editEl = document.querySelector(".comment-edit");
       let newEditedComment = "";
-        editEl.addEventListener("input", (e) => {
-          e.preventDefault();
-          newEditedComment = editEl.value;
-        });    
+      // editEl.addEventListener("input", (e) => {
+      //   e.preventDefault();
+      //   newEditedComment = editEl.value;
+      // });
       for (const saveButtonEl of saveButtonsEls) {
         let id = Number(saveButtonEl.dataset.id);
         saveButtonEl.addEventListener("click", (e) => {
@@ -212,7 +236,7 @@
       commentListEl.innerHTML = commentsHtml;
       initLikeBtnListener();
       initEditListener();
-      
+      initAnswerComment();
       initSaveEditListener();
       initCancelEditListener();
       console.log("render page");
@@ -221,31 +245,31 @@
     renderComments();
 
     // Событие при нажатии на Enter
-    contentEl.addEventListener("keyup", (e) => {
-      e.preventDefault();
-      if (e.keyCode === 13) {
-        if (nameInputEl.value === "") {
-          alert("Введите имя");
-        } else {
-          if (commentInputEl.value === "") {
-            alert("Введите комментарий");
-          } else {
-            comments.push({
-              name: nameInputEl.value,
-              comment: commentInputEl.value,
-              isLike: false,
-              date: funcDate(),
-              likes: 0,
-              idEdit: false,
-            });
-            nameInputEl.value = "";
-            commentInputEl.value = "";
-            console.log("added new comment clicked enter");
-          }
-        }
-      }
-      renderComments();
-    });
+    // contentEl.addEventListener("keyup", (e) => {
+    //   e.preventDefault();
+    //   if (e.keyCode === 13) {
+    //     if (nameInputEl.value === "") {
+    //       alert("Введите имя");
+    //     } else {
+    //       if (commentInputEl.value === "") {
+    //         alert("Введите комментарий");
+    //       } else {
+    //         comments.push({
+    //           name: nameInputEl.value.replaceAll("<", "&lt;"),
+    //           comment: commentInputEl.value.replaceAll(">", "&gt;"),
+    //           isLike: false,
+    //           date: funcDate(),
+    //           likes: 0,
+    //           idEdit: false,
+    //         });
+    //         nameInputEl.value = "";
+    //         commentInputEl.value = "";
+    //         console.log("added new comment clicked enter");
+    //       }
+    //     }
+    //   }
+    //   renderComments();
+    // });
 
     // Событие клика на кнопку "Написать"
     addButtonEl.addEventListener("click", (e) => {
