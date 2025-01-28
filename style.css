@@ -175,6 +175,21 @@ body {
   justify-content: flex-end;
 }
 
+.quote-button{
+  display: none;
+}
+
+.quote-button-active{
+  margin-top: 24px;
+  font-size: 24px;
+  margin-right: 20px;
+  padding: 10px 20px;
+  background-color: #bcec30;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+}
+
 .add-form-button {
   margin-top: 24px;
   font-size: 24px;

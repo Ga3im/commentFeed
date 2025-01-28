@@ -1,0 +1,283 @@
+"use strict";
+const comments = [
+  {
+    id: 1,
+    name: "Глеб Фокин",
+    date: "12.02.22 12:18",
+    comment: "Это будет первый комментарий на этой странице",
+    quote: "",
+    likes: 3,
+    isLike: false,
+    idEdit: false,
+  },
+  {
+    id: 2,
+    name: "Варвара",
+    date: "13.02.22 19:22",
+    comment: "Мне нравится как оформлена эта страница! ❤",
+    quote: "",
+    likes: 75,
+    isLike: true,
+    idEdit: false,
+  },
+];
+
+const contentEl = document.getElementById("content");
+const addButtonEl = document.getElementById("addButton");
+const nameInputEl = document.getElementById("nameInput");
+const commentInputEl = document.getElementById("commentInput");
+const commentListEl = document.getElementById("commentList");
+const quoteEl = document.querySelector(".quote");
+const quoteCancelBtnEl = document.getElementById("quote-cancel-button");
+const quoteButtonEl = document.querySelector(".quote-button");
+
+let userComment = "";
+let name = "";
+let canEdit = true;
+let editComment = "";
+// функция времени
+const funcDate = () => {
+  const currentDate = new Date();
+  const options = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  };
+  return currentDate.toLocaleDateString("ru-RU", options);
+};
+
+nameInputEl.addEventListener("input", () => {
+  addButtonEl.disabled = false;
+});
+commentInputEl.addEventListener("input", () => {
+  addButtonEl.disabled = false;
+});
+
+// редактирование комментария при двойном клике
+const initEditListener = () => {
+  if (canEdit) {
+    const commentsEl = document.querySelectorAll(".comment-body");
+    const likeButtonsEl = document.querySelectorAll(".like-button");
+    for (const commentEl of commentsEl) {
+      let id = Number(commentEl.dataset.id);
+      commentEl.addEventListener("dblclick", (e) => {
+        e.stopPropagation();
+        console.log("editing comment");
+        comments.map((comment) => {
+          if (comment.id === id) {
+            canEdit = false;
+            editComment = comment.comment;
+            comment.isEdit = true;
+            renderComments();
+          }
+        });
+      });
+    }
+  }
+};
+
+// ответ на комментарий
+const initAnswerComment = () => {
+  const commentsEl = document.querySelectorAll(".comment-body");
+  let name;
+  let userComment;
+  for (const commentEl of commentsEl) {
+    commentEl.addEventListener("click", (e) => {
+      e.preventDefault();
+      let id = Number(commentEl.dataset.id);
+      comments.map((comment) => {
+        if (comment.id === id) {
+          name = comment.name;
+          userComment = comment.comment;
+        }
+      });
+      console.log("answer on comment");
+      quoteEl.value = userComment + "\n©" + name;
+      quoteEl.classList.remove("quote");
+      quoteButtonEl.classList.remove("quote-button");
+      quoteButtonEl.classList.add("quote-button-active");
+      commentInputEl.scrollIntoView({ behavior: "smooth" });
+      renderComments();
+    });
+  }
+};
+
+//сохранить редактирование
+const initSaveEditListener = () => {
+  const saveButtonsEls = document.querySelectorAll(".button-save");
+  const editEl = document.querySelector(".comment-edit");
+  let newEditedComment = "";
+  // editEl.addEventListener("input", (e) => {
+  //   e.preventDefault();
+  //   newEditedComment = editEl.value;
+  // });
+  for (const saveButtonEl of saveButtonsEls) {
+    let id = Number(saveButtonEl.dataset.id);
+    saveButtonEl.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log("saved the edited comment");
+      comments.map((comment) => {
+        if (comment.id === id) {
+          comment.isEdit = false;
+          canEdit = true;
+          comment.comment = newEditedComment;
+        }
+        renderComments();
+      });
+    });
+  }
+};
+
+// отмена редактирования
+const initCancelEditListener = () => {
+  const cancelBtnsEls = document.querySelectorAll(".button-cancel");
+  for (const cancelBtnEl of cancelBtnsEls) {
+    let id = Number(cancelBtnEl.dataset.id);
+    cancelBtnEl.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log("canceled editing");
+      comments.map((comment) => {
+        if (comment.id === id) {
+          comment.comment = editComment;
+          comment.isEdit = false;
+          canEdit = true;
+        }
+      });
+      renderComments();
+    });
+  }
+};
+
+// Событие при нажатии на лайк
+const initLikeBtnListener = () => {
+  const likeButtonsEl = document.querySelectorAll(".like-button");
+  for (const likeButtonEl of likeButtonsEl) {
+    let id = Number(likeButtonEl.dataset.id);
+    likeButtonEl.addEventListener("click", (e) => {
+      e.preventDefault();
+      comments.map((comment) => {
+        if (comment.id === id) {
+          if (comment.isLike) {
+            --comment.likes;
+            comment.isLike = false;
+            console.log(`disliked comment, id:${comment.id}`);
+          } else {
+            ++comment.likes;
+            comment.isLike = true;
+            console.log(`liked comment, id:${comment.id}`);
+          }
+        }
+      });
+      renderComments();
+    });
+  }
+};
+
+// Отрисовка комментариев через JS массив
+const renderComments = () => {
+  const commentsHtml = comments
+    .map((comment) => {
+      return `<li class="comment">
+      <div class="comment-header">
+        <div>${comment.name}</div>
+        <div>${comment.date}</div>
+      </div>
+      <div class="comment-body" data-id="${comment.id}">
+        <div class='addquote'>${comment.quote}</div>
+        ${
+          comment.isEdit
+            ? `<textarea class="comment-edit">${comment.comment}</textarea>`
+            : `<div class="comment-text">${comment.comment}</div>`
+        }
+
+      </div>
+      <div class="comment-footer">
+      ${
+        comment.isEdit
+          ? `<button class='button-save' data-id="${comment.id}">Сохранить</button> <button class='button-cancel' data-id="${comment.id}">Отмена</button>`
+          : ""
+      }
+        <div class="likes">
+          <span class="likes-counter">${comment.likes}</span>
+          <button class="like-button ${
+            comment.isLike ? "-active-like" : ""
+          }" data-id="${comment.id}" ></button>
+        </div>
+      </div>
+    </li>`;
+    })
+    .join("");
+  commentListEl.innerHTML = commentsHtml;
+  initLikeBtnListener();
+  initEditListener();
+  initAnswerComment();
+  initSaveEditListener();
+  initCancelEditListener();
+  console.log("render page");
+};
+
+renderComments();
+
+// Событие при нажатии на Enter
+// contentEl.addEventListener("keyup", (e) => {
+//   e.preventDefault();
+//   if (e.keyCode === 13) {
+//     if (nameInputEl.value === "") {
+//       alert("Введите имя");
+//     } else {
+//       if (commentInputEl.value === "") {
+//         alert("Введите комментарий");
+//       } else {
+//         comments.push({
+//           name: nameInputEl.value.replaceAll("<", "&lt;"),
+//           comment: commentInputEl.value.replaceAll(">", "&gt;"),
+//           isLike: false,
+//           date: funcDate(),
+//           likes: 0,
+//           idEdit: false,
+//         });
+//         nameInputEl.value = "";
+//         commentInputEl.value = "";
+//         console.log("added new comment clicked enter");
+//       }
+//     }
+//   }
+//   renderComments();
+// });
+
+quoteCancelBtnEl.addEventListener("click", (e) => {
+  e.preventDefault();
+   quoteButtonEl.classList.add("quote-button");
+  quoteButtonEl.classList.remove("quote-button-active");
+  quoteEl.value = "";
+  quoteEl.classList.add("quote");
+  renderComments()
+});
+
+// Событие клика на кнопку "Написать"
+addButtonEl.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (nameInputEl.value === "") {
+    alert("Введите имя");
+  } else {
+    if (commentInputEl.value === "") {
+      alert("Введите комментарий");
+    } else {
+      comments.push({
+        id: comments.length + 1,
+        name: nameInputEl.value,
+        comment: commentInputEl.value,
+        isLike: false,
+        date: funcDate(),
+        likes: 0,
+        quote: quoteEl.value,
+      });
+      nameInputEl.value = "";
+      commentInputEl.value = "";
+      quoteEl.value = "";
+      quoteEl.classList.add("quote");
+      console.log('added new comment clicked "Написать"');
+    }
+  }
+  renderComments();
+});
