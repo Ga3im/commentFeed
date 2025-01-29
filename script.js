@@ -4,14 +4,12 @@ let commentsfromAPI = [];
 let saveComment = "";
 let saveName = "";
 
-
 const contentEl = document.getElementById("content");
 const addButtonEl = document.getElementById("addButton");
 const nameInputEl = document.getElementById("nameInput");
 const commentInputEl = document.getElementById("commentInput");
 const commentListEl = document.getElementById("commentList");
-saveComment = commentInputEl.value;
-saveName = nameInputEl.value;
+
 // функция времени
 const funcDate = () => {
   const currentDate = new Date();
@@ -46,10 +44,11 @@ const initLikeBtnListener = () => {
     let id = Number(likeButtonEl.dataset.id);
     likeButtonEl.addEventListener("click", (e) => {
       e.preventDefault();
-      document.getElementById("likeBtn").classList.add("loading-like");
+      likeButtonEl.classList.add("loading-like");
       commentsfromAPI.map((comment) => {
-        delay(1000).then(() => {
-          if (comment.id === id) {
+        if (comment.id === id) {
+          delay(2000).then(() => {
+            likeButtonEl.classList.remove("loading-like");
             if (comment.isLiked) {
               --comment.likes;
               comment.isLiked = false;
@@ -59,10 +58,9 @@ const initLikeBtnListener = () => {
               comment.isLiked = true;
               console.log(`liked comment, id:${comment.id}`);
             }
-          }
-        });
+          });
+        }
       });
-      fetchAndRenderComments();
     });
   }
 };
@@ -110,11 +108,7 @@ const fetchAndRenderComments = () => {
       }
     })
     .then((res) => {
-      if (res.status === 500) {
-        alert("Сервер не отвечает");
-      } else {
-        return res;
-      }
+      return res;
     })
     .then((resData) => {
       commentsfromAPI = resData.comments;
@@ -133,15 +127,18 @@ fetchAndRenderComments();
 // Событие клика на кнопку "Написать"
 addButtonEl.addEventListener("click", (e) => {
   e.preventDefault();
+  console.log('added new comment clicked "Написать"');
   if (nameInputEl.value === "") {
     alert("Введите имя");
   } else {
     if (commentInputEl.value === "") {
       alert("Введите комментарий");
     } else {
+      saveComment = commentInputEl.value;
+      saveName = nameInputEl.value;
       document.getElementById("addForm").classList.remove("add-form");
       document.getElementById("loadish").classList.remove("disable");
-    
+
       fetch(URL_API, {
         method: "POST",
         body: JSON.stringify({
@@ -161,16 +158,20 @@ addButtonEl.addEventListener("click", (e) => {
           if (res.status === 400) {
             alert("Имя или комментарий должен быть больше 2-х символов");
           } else {
-            saveComment = "";
             saveName = "";
+            saveComment = "";
             return res.json();
           }
         })
-        .then(() => {
-          fetchAndRenderComments();
-          nameInputEl.value = "";
-          commentInputEl.value = "";
-          console.log('added new comment clicked "Написать"');
+        .then((res) => {
+          if (res.status === 400 || 500) {
+            document.getElementById("addForm").classList.add("add-form");
+            document.getElementById("loadish").classList.add("disable");
+          } else {
+            nameInputEl.value = "";
+            commentInputEl.value = "";
+            fetchAndRenderComments();
+          }
         })
         .catch((error) => {
           document.getElementById("addForm").classList.add("add-form");
@@ -182,4 +183,6 @@ addButtonEl.addEventListener("click", (e) => {
         });
     }
   }
+  console.log(saveComment);
+  console.log(saveName);
 });
