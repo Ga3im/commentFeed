@@ -9,19 +9,14 @@
   <body>
     <div id="content" class="container">
       <ul id="commentList" class="comments"></ul>
-      <div class="add-form">
+      <div id="loadish" class="load">Комментарии загружаются...</div>
+      <div id="addForm" class="disable">
         <input
           id="nameInput"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
-          readonly
-          class="quote defaultTextarea"
-          name=""
-          id=""
-        ></textarea>
         <textarea
           id="commentInput"
           type="textarea"
@@ -30,7 +25,6 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button id="quote-cancel-button" class="quote-button">Отменить</button>
           <button disabled class="add-form-button" id="addButton">
             Написать
           </button>
