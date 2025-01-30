@@ -1,8 +1,6 @@
 "use strict";
 const URL_API = `https://wedev-api.sky.pro/api/v1/comment-feed/comments`;
 let commentsfromAPI = [];
-let saveComment = "";
-let saveName = "";
 
 const contentEl = document.getElementById("content");
 const addButtonEl = document.getElementById("addButton");
@@ -67,8 +65,6 @@ const initLikeBtnListener = () => {
 
 // Отрисовка комментариев через JS массив
 const renderComments = () => {
-  nameInputEl.value = saveName;
-  commentInputEl.value = saveComment;
   const commentsHtml = commentsfromAPI
     .map((comment) => {
       return `<li class="comment">
@@ -134,8 +130,6 @@ addButtonEl.addEventListener("click", (e) => {
     if (commentInputEl.value === "") {
       alert("Введите комментарий");
     } else {
-      saveComment = commentInputEl.value;
-      saveName = nameInputEl.value;
       document.getElementById("addForm").classList.remove("add-form");
       document.getElementById("loadish").classList.remove("disable");
 
@@ -158,31 +152,20 @@ addButtonEl.addEventListener("click", (e) => {
           if (res.status === 400) {
             alert("Имя или комментарий должен быть больше 2-х символов");
           } else {
-            saveName = "";
-            saveComment = "";
             return res.json();
           }
         })
-        .then((res) => {
-          if (res.status === 400 || 500) {
-            document.getElementById("addForm").classList.add("add-form");
-            document.getElementById("loadish").classList.add("disable");
-          } else {
-            nameInputEl.value = "";
-            commentInputEl.value = "";
-            fetchAndRenderComments();
-          }
+        .then(() => {
+          document.getElementById("addForm").classList.add("add-form");
+          document.getElementById("loadish").classList.add("disable");
+          fetchAndRenderComments();
         })
         .catch((error) => {
           document.getElementById("addForm").classList.add("add-form");
           document.getElementById("loadish").classList.add("disable");
           console.log(error);
-          nameInputEl.value = saveName;
-          commentInputEl.value = saveComment;
           alert("Пропал интернет соединение");
         });
     }
   }
-  console.log(saveComment);
-  console.log(saveName);
 });
