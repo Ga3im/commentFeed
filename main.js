@@ -1,5 +1,5 @@
-"use strict";
-const URL_API = `https://wedev-api.sky.pro/api/v1/comment-feed/comments`;
+import { getComments, postComments } from "./api.js";
+("use strict");
 let commentsfromAPI = [];
 
 const contentEl = document.getElementById("content");
@@ -7,17 +7,6 @@ const addButtonEl = document.getElementById("addButton");
 const nameInputEl = document.getElementById("nameInput");
 const commentInputEl = document.getElementById("commentInput");
 const commentListEl = document.getElementById("commentList");
-
-// функция времени
-const funcDate = () => {
-  const currentDate = new Date();
-  const options = {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-  };
-  return currentDate.toLocaleDateString("ru-RU", options);
-};
 
 //функция имитации загрузки API для лайков
 function delay(interval = 300) {
@@ -56,6 +45,7 @@ const initLikeBtnListener = () => {
               comment.isLiked = true;
               console.log(`liked comment, id:${comment.id}`);
             }
+            fetchAndRenderComments();
           });
         }
       });
@@ -93,19 +83,7 @@ const renderComments = () => {
 };
 
 const fetchAndRenderComments = () => {
-  fetch(URL_API, {
-    method: "GET",
-  })
-    .then((res) => {
-      if (res.status === 500) {
-        alert("Сервер не отвечает");
-      } else {
-        return res.json();
-      }
-    })
-    .then((res) => {
-      return res;
-    })
+  getComments()
     .then((resData) => {
       commentsfromAPI = resData.comments;
       document.getElementById("addForm").classList.add("add-form");
@@ -132,29 +110,11 @@ addButtonEl.addEventListener("click", (e) => {
     } else {
       document.getElementById("addForm").classList.remove("add-form");
       document.getElementById("loadish").classList.remove("disable");
-
-      fetch(URL_API, {
-        method: "POST",
-        body: JSON.stringify({
-          id: commentsfromAPI.length + 1,
-          text: commentInputEl.value,
-          name: nameInputEl.value,
-          isLiked: false,
-          date: funcDate(),
-          likes: 0,
-          forceError: true,
-        }),
+      postComments({
+        id: commentsfromAPI.length + 1,
+        userText: commentInputEl.value,
+        userName: nameInputEl.value,
       })
-        .then((res) => {
-          if (res.status === 500) {
-            alert("Сервер не отвечает");
-          }
-          if (res.status === 400) {
-            alert("Имя или комментарий должен быть больше 2-х символов");
-          } else {
-            return res.json();
-          }
-        })
         .then(() => {
           document.getElementById("addForm").classList.add("add-form");
           document.getElementById("loadish").classList.add("disable");
