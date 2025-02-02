@@ -1,3 +1,5 @@
+import { setId } from "./main.js";
+
 const URL_API = `https://wedev-api.sky.pro/api/v2/comment-feed/comments`;
 
 // функция времени
@@ -20,7 +22,9 @@ export const getComments = () => {
   }).then((res) => {
     if (res.status === 500) {
       alert("Сервер не отвечает");
-    } else {
+    }
+    if (res.status === 200) {
+      setId(res.id);
       return res.json();
     }
   });
@@ -86,7 +90,7 @@ export const registration = ({ login, name, password }) => {
   });
 };
 
-export const like = ({id, token}) => {
+export const like = ({ id, token }) => {
   return fetch(URL_API + `/${id}/toggle-like`, {
     method: "POST",
     headers: {
@@ -94,10 +98,23 @@ export const like = ({id, token}) => {
     },
   }).then((res) => {
     if (res.status === 401) {
-      throw new Error('Авторизуйтесь, чтобы ставить лайк')
+      throw new Error("Авторизуйтесь, чтобы ставить лайк");
     }
     if (res.status === 200) {
       return res.json();
+    }
+  });
+};
+
+export const delComment = ({ id, token }) => {
+  return fetch(URL_API + `/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((res) => {
+    if (res.status === 201) {
+      res.json();
     }
   });
 };

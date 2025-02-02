@@ -2,6 +2,7 @@ import { login } from "./api.js";
 import {
   fetchAndRenderComments,
   setAuth,
+  setId,
   setToken,
   setUserName,
 } from "./main.js";
@@ -47,10 +48,12 @@ export const renderLogin = () => {
     })
       .then((res) => {
         fetchAndRenderComments();
-        localStorage.setItem('myName', res.user.name);
-        localStorage.setItem('myToken', res.user.token);
-        localStorage.setItem('isAuth', true);
+        localStorage.setItem("myName", res.user.name);
+        localStorage.setItem("myToken", res.user.token);
+        localStorage.setItem("isAuth", true);
+        localStorage.setItem("myId", res.user.login);
         setAuth(true);
+        setId(res.user.login);
         setToken(res.user.token);
         setUserName(res.user.name);
         return res;

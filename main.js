@@ -1,12 +1,17 @@
 "use strict";
-import { getComments, like, postComments } from "./api.js";
+import { delComment, getComments, like, postComments } from "./api.js";
 import { renderLogin } from "./renderLogin.js";
 let commentsfromAPI = [];
 let isAuth = localStorage.getItem("isAuth");
 let userName = localStorage.getItem("myName");
 let token = localStorage.getItem("myToken");
+let id = localStorage.getItem("myId");
 let quoteName = "";
 let quoteText = "";
+
+export const setId = (newId) => {
+  id = newId;
+};
 export const setAuth = (newIsAuth) => {
   isAuth = newIsAuth;
 };
@@ -41,7 +46,6 @@ const renderComments = () => {
                 <div class="comment-text">${comment.text}</div>
           </div>
           <div class="comment-footer">
-    
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
               <button id="likeBtn" class="like-button ${
@@ -49,6 +53,11 @@ const renderComments = () => {
               }" data-id="${comment.id}"></button>
             </div>
           </div>
+                ${
+                  localStorage.getItem("myId") === comment.author.login
+                    ? `<button class="del-btn" data-id="${comment.id}">Удалить</button>`
+                    : ""
+                }
         </li>`;
     })
     .join("");
@@ -105,10 +114,26 @@ const renderComments = () => {
   const quoteComEl = document.getElementById("quoteCom");
   const closeQuoteEl = document.getElementById("close-quote");
 
-  // Событие клика на кнопку "Написать"
   if (isAuth) {
     const nameInputEl = document.getElementById("nameInput");
+    const delBtnEl = document.querySelectorAll(".del-btn");
+    const commentBodyEl = document.querySelectorAll(".comment-body");
+
     nameInputEl.value = userName;
+
+    //Удаление
+
+    for (const delBtn of delBtnEl) {
+      let id = delBtn.dataset.id;
+      delBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        delComment({ id: id, token: token }).then(() => {
+          fetchAndRenderComments();
+        });
+      });
+    }
+
+    // Событие клика на кнопку "Написать"
     addButtonEl.addEventListener("click", (e) => {
       e.preventDefault();
       console.log('added new comment clicked "Написать"');
@@ -145,7 +170,6 @@ const renderComments = () => {
   // ответ на комментарий
   const quoteEl = document.getElementById("quoteComment");
   const quoteNameEl = document.getElementById("quoteName");
-  const commentBodyEl = document.querySelectorAll(".comment-body");
   for (const commentBody of commentBodyEl) {
     let id = commentBody.dataset.id;
     commentBody.addEventListener("click", (e) => {
