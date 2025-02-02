@@ -85,3 +85,19 @@ export const registration = ({ login, name, password }) => {
     }
   });
 };
+
+export const like = ({id, token}) => {
+  return fetch(URL_API + `/${id}/toggle-like`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((res) => {
+    if (res.status === 401) {
+      throw new Error('Авторизуйтесь, чтобы ставить лайк')
+    }
+    if (res.status === 200) {
+      return res.json();
+    }
+  });
+};

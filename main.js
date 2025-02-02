@@ -1,5 +1,5 @@
 "use strict";
-import { getComments, postComments } from "./api.js";
+import { getComments, like, postComments } from "./api.js";
 import { renderLogin } from "./renderLogin.js";
 let commentsfromAPI = [];
 let isAuth = localStorage.getItem("isAuth");
@@ -10,11 +10,9 @@ let quoteText = "";
 export const setAuth = (newIsAuth) => {
   isAuth = newIsAuth;
 };
-
 export const setToken = (newToken) => {
   token = newToken;
 };
-
 export const setUserName = (newName) => {
   userName = newName;
 };
@@ -48,7 +46,7 @@ const renderComments = () => {
               <span class="likes-counter">${comment.likes}</span>
               <button id="likeBtn" class="like-button ${
                 comment.isLiked ? "-active-like" : ""
-              }" data-id="${comment.id}" ></button>
+              }" data-id="${comment.id}"></button>
             </div>
           </div>
         </li>`;
@@ -163,39 +161,24 @@ const renderComments = () => {
           quoteNameEl.textContent = `© ${comment.author.name}`;
         }
       });
+      closeQuoteEl.addEventListener("click", (e) => {
+        e.stopPropagation();
+        quoteComEl.classList.add("disable");
+        quoteComEl.classList.remove("quote");
+      });
     });
   }
-
-  closeQuoteEl.addEventListener("click", (e) => {
-    e.stopPropagation();
-    quoteComEl.classList.add("disable");
-    quoteComEl.classList.remove("quote");
-  });
 
   // Событие при нажатии на лайк
   const initLikeBtnListener = () => {
     const likeButtonsEl = document.querySelectorAll(".like-button");
     for (const likeButtonEl of likeButtonsEl) {
-      let id = Number(likeButtonEl.dataset.id);
+      let id = likeButtonEl.dataset.id;
       likeButtonEl.addEventListener("click", (e) => {
         e.preventDefault();
-        likeButtonEl.classList.add("loading-like");
-        commentsfromAPI.map((comment) => {
-          if (comment.id === id) {
-            delay(2000).then(() => {
-              likeButtonEl.classList.remove("loading-like");
-              if (comment.isLiked) {
-                --comment.likes;
-                comment.isLiked = false;
-                console.log(`disLikedd comment, id:${comment.id}`);
-              } else {
-                ++comment.likes;
-                comment.isLiked = true;
-                console.log(`liked comment, id:${comment.id}`);
-              }
-              fetchAndRenderComments();
-            });
-          }
+        like({ id: id, token: token }).then((res) => {
+          console.log(res.result.isLiked);
+          fetchAndRenderComments();
         });
       });
     }
