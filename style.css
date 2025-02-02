@@ -3,10 +3,10 @@
     transform: rotate(0deg);
   }
   25% {
-    transform: rotate(30deg);;
+    transform: rotate(30deg);
   }
   75% {
-    transform: rotate(-30deg);;
+    transform: rotate(-30deg);
   }
   to {
     transform: rotate(0deg);
@@ -50,7 +50,7 @@ body {
   );
   border-radius: 20px;
 }
-.disable{
+.disable {
   display: none;
 }
 
@@ -145,6 +145,15 @@ body {
   border: none;
 }
 
+.add-form-name-full {
+  width: 300px;
+  font-size: 16px;
+  font-family: Helvetica;
+  border-radius: 8px;
+  padding: 11px 22px;
+  background: #9c9f9f;
+  border: none;
+}
 .add-form-name {
   width: 300px;
   padding: 11px 22px;
@@ -173,4 +182,52 @@ body {
 
 .add-form-button:hover {
   opacity: 0.9;
+}
+
+.auth-content {
+  padding-top: 30px;
+}
+
+.auth-button {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.login-body {
+  box-sizing: border-box;
+  background: radial-gradient(
+    75.42% 75.42% at 50% 42.37%,
+    rgba(53, 53, 53, 0) 22.92%,
+    #7334ea 100%
+  );
+  filter: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
+  border-radius: 20px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 20px 30px 50px 30px;
+}
+
+.login-button {
+  font-size: 24px;
+  padding: 10px 20px;
+  background-color: #bcec30;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+}
+
+.reg-in-login {
+  text-align: center;
+  text-decoration: underline;
+  cursor: pointer;
+  padding-bottom: 20px;
+}
+.content-name {
+  text-align: center;
+  padding-top: 20px;
+  font-size: 30px;
 }

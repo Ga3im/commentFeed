@@ -1,19 +1,22 @@
-const URL_API = `https://wedev-api.sky.pro/api/v1/comment-feed/comments`;
+const URL_API = `https://wedev-api.sky.pro/api/v2/comment-feed/comments`;
 
 // функция времени
 const funcDate = () => {
-    const currentDate = new Date();
-    const options = {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-    };
-    return currentDate.toLocaleDateString("ru-RU", options);
+  const currentDate = new Date();
+  const options = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
   };
+  return currentDate.toLocaleDateString("ru-RU", options);
+};
 
 export const getComments = () => {
   return fetch(URL_API, {
     method: "GET",
+    headers: {
+      Authorization: `Bearer`,
+    },
   }).then((res) => {
     if (res.status === 500) {
       alert("Сервер не отвечает");
@@ -23,17 +26,14 @@ export const getComments = () => {
   });
 };
 
-export const postComments = ({id, userText, userName}) => {
+export const postComments = ({ text, token }) => {
   return fetch(URL_API, {
     method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({
-      id: id,
-      text: userText,
-      name: userName,
-      isLiked: false,
-      date: funcDate(),
-      likes: 0,
-      forceError: true,
+      text,
     }),
   }).then((res) => {
     if (res.status === 500) {
@@ -44,5 +44,40 @@ export const postComments = ({id, userText, userName}) => {
     } else {
       return res.json();
     }
+  });
+};
+
+export const login = ({ login, password }) => {
+  return fetch("https://wedev-api.sky.pro/api/user/login", {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  })
+    .then((res) => {
+      if (res.status === 400) {
+        throw new Error("Неправильный логин или пароль");
+      }
+      if (res.status === 201) {
+        return res.json();
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const registration = ({ login, name, password }) => {
+  fetch("https://wedev-api.sky.pro/api/user", {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      name,
+      password,
+    }),
+  }).then((resData) => {
+    console.log(resData);
+    return resData.json();
   });
 };
