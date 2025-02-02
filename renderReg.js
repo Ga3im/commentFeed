@@ -1,4 +1,5 @@
-import { login, registration } from "./api.js";
+import { registration } from "./api.js";
+import { fetchAndRenderComments, setAuth, setToken, setUserName } from "./main.js";
 import { renderLogin } from "./renderLogin.js";
 
 export const renderReg = () => {
@@ -45,11 +46,16 @@ export const renderReg = () => {
       login: loginInputEl.value,
       name: nameInputEl.value,
       password: passwordInputEl.value,
-    })
+    }).then((res) => {
+        setAuth(true)
+        setUserName(res.user.name);
+        setToken(res.user.token)
+        fetchAndRenderComments()
+    });
   });
 
-  authBtnEl.addEventListener('click', (e)=>{
+  authBtnEl.addEventListener("click", (e) => {
     e.preventDefault();
-    renderLogin()
-  })
+    renderLogin();
+  });
 };

@@ -15,6 +15,16 @@
 
 body {
   margin: 0;
+  background: #202020;
+}
+
+.login-logout-button {
+  text-align: end;
+  background: #202020;
+  color: #fff;
+  text-decoration: underline;
+  padding-right: 30px;
+  cursor: pointer;
 }
 
 .container {
@@ -92,6 +102,7 @@ body {
 .comment-body {
   margin-top: 32px;
   margin-bottom: 32px;
+  cursor: pointer;
 }
 
 .comment-text {
@@ -154,9 +165,36 @@ body {
   background: #9c9f9f;
   border: none;
 }
+
 .add-form-name {
   width: 300px;
   padding: 11px 22px;
+}
+
+.disable {
+  display: none;
+}
+
+.quote {
+  color: #000;
+  border-radius: 8px;
+  padding: 0px 10px;
+  margin-top: 10px;
+  background: bisque;
+}
+
+.quote-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.close-quote-btn {
+  cursor: pointer;
+}
+
+.quote-name {
+  margin: 0;
+  padding-bottom: 5px;
 }
 
 .add-form-text {

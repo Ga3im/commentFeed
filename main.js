@@ -1,10 +1,12 @@
+"use strict";
 import { getComments, postComments } from "./api.js";
 import { renderLogin } from "./renderLogin.js";
-("use strict");
 let commentsfromAPI = [];
-let isAuth = false;
-let userName = "";
-let token = "";
+let isAuth = localStorage.getItem("isAuth");
+let userName = localStorage.getItem("myName");
+let token = localStorage.getItem("myToken");
+let quoteName = "";
+let quoteText = "";
 
 export const setAuth = (newIsAuth) => {
   isAuth = newIsAuth;
@@ -39,6 +41,8 @@ const renderComments = () => {
             <div>${comment.date}</div>
           </div>
           <div class="comment-body" data-id="${comment.id}">
+                <div>${quoteText}</div>
+                <div>${quoteName}</div>
                 <div class="comment-text">${comment.text}</div>
           </div>
           <div class="comment-footer">
@@ -53,7 +57,17 @@ const renderComments = () => {
         </li>`;
     })
     .join("");
-  appEl.innerHTML = ` <div id="content" class="container">
+  appEl.innerHTML = ` 
+  ${
+    isAuth
+      ? `<p id="main-logout-button" class="login-logout-button">
+        Выйти
+      </p>`
+      : ` <p id="main-login-button" class="login-logout-button">
+        Войти
+      </p>`
+  }
+  <div id="content" class="container">
       <ul id="commentList" class="comments">${commentsHtml}</ul>
       ${
         isAuth
@@ -64,6 +78,13 @@ const renderComments = () => {
           class="add-form-name-full"
           readonly
         />
+        <div id="quoteCom" class="disable">
+          <div class="quote-content">
+            <p id="quoteComment"></p>
+            <div id="close-quote" class="close-quote-btn" >x</div>
+          </div>
+          <p class="quote-name" id="quoteName"></p>
+        </div>
         <textarea
           id="commentInput"
           type="textarea"
@@ -82,14 +103,17 @@ const renderComments = () => {
       }`;
 
   const addButtonEl = document.getElementById("addButton");
-  const nameInputEl = document.getElementById("nameInput");
   const commentInputEl = document.getElementById("commentInput");
   const authButtonEl = document.getElementById("auth-btn");
+  const mainLoginButtonEl = document.getElementById("main-login-button");
+  const mainLogoutButtonEl = document.getElementById("main-logout-button");
+  const quoteComEl = document.getElementById("quoteCom");
+  const closeQuoteEl = document.getElementById("close-quote");
 
   // Событие клика на кнопку "Написать"
   if (isAuth) {
+    const nameInputEl = document.getElementById("nameInput");
     nameInputEl.value = userName;
-
     addButtonEl.addEventListener("click", (e) => {
       e.preventDefault();
       console.log('added new comment clicked "Написать"');
@@ -104,12 +128,53 @@ const renderComments = () => {
           console.log(error);
         });
     });
+    // кнопка выйти
+    mainLogoutButtonEl.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.clear();
+      isAuth = false;
+      fetchAndRenderComments();
+    });
   }
+  // авторизация
   if (!isAuth) {
-    authButtonEl.addEventListener("click", () => {
+    authButtonEl.addEventListener("click", (e) => {
+      e.preventDefault();
+      renderLogin();
+    });
+    mainLoginButtonEl.addEventListener("click", (e) => {
+      e.preventDefault();
       renderLogin();
     });
   }
+  // ответ на комментарий
+  const quoteEl = document.getElementById("quoteComment");
+  const quoteNameEl = document.getElementById("quoteName");
+  const commentBodyEl = document.querySelectorAll(".comment-body");
+  for (const commentBody of commentBodyEl) {
+    let id = commentBody.dataset.id;
+    commentBody.addEventListener("click", (e) => {
+      e.preventDefault();
+      quoteComEl.classList.remove("disable");
+      quoteComEl.classList.add("quote");
+      quoteEl.scrollIntoView({ behavior: "smooth" });
+      commentsfromAPI.map((comment) => {
+        if (id === comment.id) {
+          quoteText = comment.text;
+          quoteName = `©${comment.author.name}`;
+          quoteEl.textContent = comment.text;
+          quoteNameEl.textContent = `© ${comment.author.name}`;
+          console.log(quote);
+        }
+      });
+    });
+  }
+
+  closeQuoteEl.addEventListener("click", (e) => {
+    e.stopPropagation();
+    quoteComEl.classList.add("disable");
+    quoteComEl.classList.remove("quote");
+  });
 
   // Событие при нажатии на лайк
   const initLikeBtnListener = () => {
@@ -143,7 +208,7 @@ const renderComments = () => {
   initLikeBtnListener();
   console.log("render page");
 };
-
+// рендер данных из Api
 export const fetchAndRenderComments = () => {
   getComments()
     .then((resData) => {

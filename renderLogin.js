@@ -46,8 +46,10 @@ export const renderLogin = () => {
       password: passwordInputEl.value,
     })
       .then((res) => {
-        console.log(res.user.name);
         fetchAndRenderComments();
+        localStorage.setItem('myName', res.user.name);
+        localStorage.setItem('myToken', res.user.token);
+        localStorage.setItem('isAuth', true);
         setAuth(true);
         setToken(res.user.token);
         setUserName(res.user.name);

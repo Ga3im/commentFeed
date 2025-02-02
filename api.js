@@ -69,7 +69,7 @@ export const login = ({ login, password }) => {
 };
 
 export const registration = ({ login, name, password }) => {
-  fetch("https://wedev-api.sky.pro/api/user", {
+  return fetch("https://wedev-api.sky.pro/api/user", {
     method: "POST",
     body: JSON.stringify({
       login,
@@ -77,7 +77,11 @@ export const registration = ({ login, name, password }) => {
       password,
     }),
   }).then((resData) => {
-    console.log(resData);
-    return resData.json();
+    if (resData.status === 400) {
+      throw new Error("Пользователь с таким логином уже сущетсвует");
+    }
+    if (resData.status === 201) {
+      return resData.json();
+    }
   });
 };
