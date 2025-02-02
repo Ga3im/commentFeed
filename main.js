@@ -7,7 +7,6 @@ let userName = localStorage.getItem("myName");
 let token = localStorage.getItem("myToken");
 let quoteName = "";
 let quoteText = "";
-
 export const setAuth = (newIsAuth) => {
   isAuth = newIsAuth;
 };
@@ -40,9 +39,7 @@ const renderComments = () => {
             <div>${comment.author.name}</div>
             <div>${comment.date}</div>
           </div>
-          <div class="comment-body" data-id="${comment.id}">
-                <div>${quoteText}</div>
-                <div>${quoteName}</div>
+          <div class="comment-body" data-id="${comment.id}">             
                 <div class="comment-text">${comment.text}</div>
           </div>
           <div class="comment-footer">
@@ -164,7 +161,6 @@ const renderComments = () => {
           quoteName = `©${comment.author.name}`;
           quoteEl.textContent = comment.text;
           quoteNameEl.textContent = `© ${comment.author.name}`;
-          console.log(quote);
         }
       });
     });
