@@ -1,5 +1,6 @@
 "use strict";
 import { delComment, getComments, like, postComments } from "./api.js";
+import { formatDateToRu } from "./lib/formateDate/formatDate.js";
 import { renderLogin } from "./renderLogin.js";
 let commentsfromAPI = [];
 let isAuth = localStorage.getItem("isAuth");
@@ -40,7 +41,7 @@ const renderComments = () => {
       return `<li class="comment">
           <div class="comment-header">
             <div>${comment.author.name}</div>
-            <div>${comment.date}</div>
+            <div>${formatDateToRu(new Date (comment.date))}</div>
           </div>
           <div class="comment-body" data-id="${comment.id}">             
                 <div class="comment-text">${comment.text}</div>
@@ -168,6 +169,7 @@ const renderComments = () => {
     });
   }
   // ответ на комментарий
+  const commentBodyEl = document.querySelectorAll(".comment-body");
   const quoteEl = document.getElementById("quoteComment");
   const quoteNameEl = document.getElementById("quoteName");
   for (const commentBody of commentBodyEl) {
