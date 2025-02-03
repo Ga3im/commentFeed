@@ -18,8 +18,19 @@ body {
   background: #202020;
 }
 
+.write-login {
+  display: flex;
+  justify-content: space-between;
+}
+
+.write-comment{
+  text-decoration: underline;
+  padding-left: 30px;
+  cursor: pointer;
+  color: #fff;
+}
+
 .login-logout-button {
-  text-align: end;
   background: #202020;
   color: #fff;
   text-decoration: underline;
@@ -99,7 +110,7 @@ body {
   align-items: center;
 }
 
-.del-btn{
+.del-btn {
   font-size: 14px;
   padding: 2px 10px;
   background-color: #bcec30;

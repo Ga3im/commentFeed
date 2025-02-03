@@ -41,7 +41,7 @@ const renderComments = () => {
       return `<li class="comment">
           <div class="comment-header">
             <div>${comment.author.name}</div>
-            <div>${formatDateToRu(new Date (comment.date))}</div>
+            <div>${formatDateToRu(new Date(comment.date))}</div>
           </div>
           <div class="comment-body" data-id="${comment.id}">             
                 <div class="comment-text">${comment.text}</div>
@@ -62,16 +62,19 @@ const renderComments = () => {
         </li>`;
     })
     .join("");
-  appEl.innerHTML = ` 
-  ${
-    isAuth
-      ? `<p id="main-logout-button" class="login-logout-button">
+  appEl.innerHTML = ` <div class="write-login">
+  <p class="write-comment">Написать комментарий</p>
+   ${
+     isAuth
+       ? `<p id="main-logout-button" class="login-logout-button">
         Выйти
       </p>`
-      : ` <p id="main-login-button" class="login-logout-button">
+       : ` <p id="main-login-button" class="login-logout-button">
         Войти
       </p>`
-  }
+   }
+  </div>
+ 
   <div id="content" class="container">
       <ul id="commentList" class="comments">${commentsHtml}</ul>
       ${
@@ -115,15 +118,23 @@ const renderComments = () => {
   const quoteComEl = document.getElementById("quoteCom");
   const closeQuoteEl = document.getElementById("close-quote");
 
+  document.querySelector(".write-comment").addEventListener("click", (e) => {
+    e.preventDefault();
+    if (isAuth) {
+      document.getElementById("addForm").scrollIntoView({ behavior: "smooth" });
+    } else {
+      document
+        .querySelector(".auth-content")
+        .scrollIntoView({ behavior: "smooth" });
+    }
+  });
+
   if (isAuth) {
     const nameInputEl = document.getElementById("nameInput");
     const delBtnEl = document.querySelectorAll(".del-btn");
-    const commentBodyEl = document.querySelectorAll(".comment-body");
-
     nameInputEl.value = userName;
 
     //Удаление
-
     for (const delBtn of delBtnEl) {
       let id = delBtn.dataset.id;
       delBtn.addEventListener("click", (e) => {
